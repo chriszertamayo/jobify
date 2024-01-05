@@ -27,7 +27,7 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET
 })
 
-const __dirname = dirname(import.meta.url)
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
@@ -37,9 +37,14 @@ app.use(express.static(path.resolve(__dirname, './public')))
 app.use(cookieParser())
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Helo World')
+app.get('/',(req,res)=>{
+    res.send('Hello World')
 })
+//for client build
+// app.get('*',(req,res)=>{
+//     res.sendFile(path.resolve(__dirname,'./public','index.html'))
+// })
+
 
 app.get('/api/v1/test', (req, res) => {
     res.json({ msg: 'test route' })
@@ -48,6 +53,10 @@ app.get('/api/v1/test', (req, res) => {
 app.use('/api/v1/jobs', authenticateUser, jobRouter)
 app.use('/api/v1/users', authenticateUser, userRouter)
 app.use('/api/v1/auth', authRouter)
+
+app.get('*',(req,res)=>{
+    res.sendFile(path.resolve(__dirname,'./public','index.html'))
+})
 
 app.use('*', (req, res) => {
     res.status(404).json({ msg: 'not found' })
